@@ -40,59 +40,45 @@ int	ft_atoi(const char *str)
 	return (res * mult);
 }
 
-// void	send_signals(int pid, char *message)
-// {
-// 	int	line;
-// 	int	bit;
-
-// 	line = 0;
-// 	bit = 0;
-// 	while (message[line])
-// 	{
-// 		bit = 7;
-// 		while (bit >= 0)
-// 		{
-// 			if (((message[line] >> bit) & 1) == 1)
-// 				kill(pid, SIGUSR1);
-// 			else if (((message[line] >> bit) & 1) == 0)
-// 				kill(pid, SIGUSR2);
-// 			bit--;
-// 			usleep(50);
-// 		}
-// 		line++;
-// 	}
-// 	bit = 8;
-// 	while (bit--)
-// 	{
-// 		kill(pid, SIGUSR2);
-// 		usleep(50);
-// 	}
-// }
-
-static void	send_signals(int pid, char *str)
+void	send_signals(int pid, char *message)
 {
-	int		i;
-	char	c;
+ 	int			line;
+ 	int			bit;
 
-	while (*str)
-	{
-		i = 8;
-		c = *str++;
-		while (i--)
+ 	line = 0;
+ 	bit = 0;
+ 	while (message[line])
+ 	{
+ 		bit = 7;
+ 		while (bit >= 0)
 		{
-			if (c >> i & 1)
-				kill(pid, SIGUSR2);
-			else
-				kill(pid, SIGUSR1);
-			usleep(100);
-		}
-	}
-	i = 8;
-	while (i--)
+ 			if (((message[line] >> bit) & 1) == 1)
+ 				kill(pid, SIGUSR1);
+ 			else if (((message[line] >> bit) & 1) == 0)
+ 				kill(pid, SIGUSR2);
+ 			bit--;
+ 			usleep(50);
+ 		}
+ 		line++;
+ 	}
+	bit = 8;
+	while (bit--)
 	{
-		kill(pid, SIGUSR1);
-		usleep(100);
+		kill(pid, SIGUSR2);
+		usleep(50);
 	}
+}
+void	receive(int sig)
+{
+	static int	bytes = 0;
+	
+	if (sig == SIGUSR1)
+	{
+		ft_printf("asdasd\n");
+		bytes++;
+	}
+	else
+		ft_printf("%d\n", bytes);
 }
 
 int	main(int argc, char **argv)
@@ -110,7 +96,12 @@ int	main(int argc, char **argv)
 		message = argv[2];
 		if (!message[0])
 			error_message('c');
+		printf("Bytes:");
+		signal(SIGUSR1, receive);
+		signal(SIGUSR2, receive);
 		send_signals(pid, message);
 	}
+	while (1)
+	;
 	return (0);
 }
