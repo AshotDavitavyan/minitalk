@@ -1,3 +1,4 @@
+
 #include "minitalk.h"
 
 void	error_message(char c)
@@ -39,26 +40,58 @@ int	ft_atoi(const char *str)
 	return (res * mult);
 }
 
-void	send_signals(int pid, char *message)
-{
-	int	line;
-	int	bit;
+// void	send_signals(int pid, char *message)
+// {
+// 	int	line;
+// 	int	bit;
 
-	line = 0;
-	bit = 0;
-	while (message[line])
+// 	line = 0;
+// 	bit = 0;
+// 	while (message[line])
+// 	{
+// 		bit = 7;
+// 		while (bit >= 0)
+// 		{
+// 			if (((message[line] >> bit) & 1) == 1)
+// 				kill(pid, SIGUSR1);
+// 			else if (((message[line] >> bit) & 1) == 0)
+// 				kill(pid, SIGUSR2);
+// 			bit--;
+// 			usleep(50);
+// 		}
+// 		line++;
+// 	}
+// 	bit = 8;
+// 	while (bit--)
+// 	{
+// 		kill(pid, SIGUSR2);
+// 		usleep(50);
+// 	}
+// }
+
+static void	send_signals(int pid, char *str)
+{
+	int		i;
+	char	c;
+
+	while (*str)
 	{
-		bit = 0;
-		while (bit <= 7)
+		i = 8;
+		c = *str++;
+		while (i--)
 		{
-			if (((message[line] >> bit) & 1) == 1)
-				kill(pid, SIGUSR1);
-			else if (((message[line] >> bit) & 1) == 0)
+			if (c >> i & 1)
 				kill(pid, SIGUSR2);
-			bit++;
-			usleep(50);
+			else
+				kill(pid, SIGUSR1);
+			usleep(100);
 		}
-		line++;
+	}
+	i = 8;
+	while (i--)
+	{
+		kill(pid, SIGUSR1);
+		usleep(100);
 	}
 }
 

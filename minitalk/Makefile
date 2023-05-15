@@ -1,8 +1,8 @@
 NAME = server
 NAMEC = client
-SRCS = server.c
+SRCS = Server_bonus.c
 OBJS = $(SRCS:.c=.o)
-SRCC = client.c
+SRCC = Client_bonus.c
 OBJC = $(SRCC:.c=.o)
 CC = cc
 RM = rm -rf
